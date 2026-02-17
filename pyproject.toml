@@ -1,0 +1,68 @@
+[tool.poetry]
+name = "electronet"
+version = "0.1.0"
+description = "Backend for developing an online platform for an electronics retail chain"
+authors = ["Nadezhda_Popova <nadezhdapopova13@yandex.ru>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.12"
+django = "^5.2.8"
+poetry-core = ">=2.0.0"
+djangorestframework = "^3.16.1"
+python-dotenv = "^1.2.1"
+django-filter = "^25.2"
+djangorestframework-simplejwt = "^5.5.1"
+drf-yasg = "^1.21.14"
+django-cors-headers = "^4.9.0"
+gunicorn = "^25.1.0"
+psycopg2-binary = "^2.9.11"
+
+[build-system]
+requires = ["poetry-core>=2.0.0,<3.0.0"]
+build-backend = "poetry.core.masonry.api"
+
+[dependency-groups]
+lint = [
+    "black (>=26.1.0,<27.0.0)",
+    "isort (>=7.0.0,<8.0.0)",
+    "flake8 (>=7.3.0,<8.0.0)"
+]
+
+[tool.black]
+line-length = 119
+exclude = """
+/(
+    .git
+  | .hg
+  | .mypy_cache
+  | .tox
+  | .venv
+  | venv
+  | _build
+  | buck-out
+  | build
+  | dist
+  | migrations
+  | static
+  | media
+  | node_modules
+  | __pycache__
+  | manage.py
+  | settings.py
+  | asgi.py
+  | wsgi.py
+)/
+"""
+
+[tool.isort]
+profile = "black"
+line_length = 119
+multi_line_output = 3
+include_trailing_comma = true
+force_grid_wrap = 0
+combine_as_imports = true
+skip_gitignore = true
+known_django = ["django"]
+sections = ["FUTURE", "STDLIB", "DJANGO", "THIRDPARTY", "FIRSTPARTY", "LOCALFOLDER"]
+default_section = "THIRDPARTY"
