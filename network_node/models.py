@@ -5,7 +5,6 @@ from django.db import models
 
 class Address(models.Model):
     """Модель Контакты поставщика"""
-
     country = models.CharField(max_length=100, db_index=True)
     city = models.CharField(max_length=100, db_index=True)
     street = models.CharField(max_length=255)
@@ -14,7 +13,6 @@ class Address(models.Model):
 
 class NetworkNode(models.Model):
     """Модель Поставщик"""
-
     name = models.CharField(max_length=255)
     email = models.EmailField()
     address = models.ForeignKey(
@@ -60,7 +58,6 @@ class NetworkNode(models.Model):
 
 class Product(models.Model):
     """Модель Продукт"""
-
     name = models.CharField(max_length=255)
     model = models.CharField(max_length=255)
     release_date = models.DateField()
