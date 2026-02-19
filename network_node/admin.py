@@ -13,7 +13,7 @@ class ProductInline(admin.TabularInline):
 @admin.register(Address)
 class AddressAdmin(admin.ModelAdmin):
     list_display = ("country", "city", "street", "house_number")
-    search_fields = ("city", "country")
+    search_fields = ("country", "city", "street")
 
 
 @admin.register(NetworkNode)
@@ -25,6 +25,7 @@ class NetworkNodeAdmin(admin.ModelAdmin):
     autocomplete_fields = ("address", "supplier")
     readonly_fields = ("supplier_link", "level")
     inlines = [ProductInline]
+    search_fields = ("name", "email")
 
     def supplier_link(self, obj):
         """Отображает ссылку на поставщика на странице объекта"""

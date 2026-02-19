@@ -43,3 +43,6 @@ class NetworkNodeListSerializer(serializers.ModelSerializer):
 
 class NetworkNodeDetailSerializer(NetworkNodeListSerializer):
     products = ProductSerializer(many=True, read_only=True)
+
+    class Meta(NetworkNodeListSerializer.Meta):
+        fields = NetworkNodeListSerializer.Meta.fields + ("products",)
