@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from network_node.models import NetworkNode, Product, Address
+from network_node.models import Address, NetworkNode, Product
 
 
 class ProductSerializer(serializers.ModelSerializer):
@@ -23,6 +23,7 @@ class SupplierShortSerializer(serializers.ModelSerializer):
 
 class NetworkNodeListSerializer(serializers.ModelSerializer):
     """Сериализатор модели поставщика: запрещает обновление поля Задолженность перед поставщиком через API"""
+
     supplier = SupplierShortSerializer(read_only=True)
     address = AddressShortSerializer(read_only=True)
 

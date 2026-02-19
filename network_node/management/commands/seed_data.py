@@ -1,6 +1,7 @@
-from django.core.management.base import BaseCommand
 from django.contrib.auth.models import User
-from network_node.models import NetworkNode, Product, Address
+from django.core.management.base import BaseCommand
+
+from network_node.models import Address, NetworkNode, Product
 
 
 class Command(BaseCommand):
@@ -26,21 +27,10 @@ class Command(BaseCommand):
             house_number="10",
         )
         factory, _ = NetworkNode.objects.get_or_create(
-            name="Factory",
-            email="factory@test.com",
-            address=factory_address
+            name="Factory", email="factory@test.com", address=factory_address
         )
         retail, _ = NetworkNode.objects.get_or_create(
-            name="Retail",
-            email="retail@test.com",
-            address=retail_address,
-            supplier=factory,
-            debt=10000
+            name="Retail", email="retail@test.com", address=retail_address, supplier=factory, debt=10000
         )
-        Product.objects.get_or_create(
-            name="TV",
-            model="X100",
-            release_date="2026-01-01",
-            node=retail
-        )
+        Product.objects.get_or_create(name="TV", model="X100", release_date="2026-01-01", node=retail)
         self.stdout.write(self.style.SUCCESS("Тестовые данные успешно созданы / уже существуют"))

@@ -2,7 +2,7 @@ from django.contrib import admin
 from django.urls import reverse
 from django.utils.html import format_html
 
-from network_node.models import NetworkNode, Product, Address
+from network_node.models import Address, NetworkNode, Product
 
 
 class ProductInline(admin.TabularInline):
@@ -33,16 +33,18 @@ class NetworkNodeAdmin(admin.ModelAdmin):
             url = reverse("admin:network_node_networknode_change", args=[obj.supplier.id])
             return format_html('<a href="{}">{}</a>', url, obj.supplier.name)
         return "-"
+
     supplier_link.short_description = "Поставщик"
 
     def get_country(self, obj):
         return obj.address.country
+
     get_country.short_description = "Country"
 
     def get_city(self, obj):
         return obj.address.city
-    get_city.short_description = "City"
 
+    get_city.short_description = "City"
 
     @admin.action(description="Очистить задолженность")
     def clear_debt(modeladmin, request, queryset):

@@ -1,6 +1,8 @@
 from django.contrib.auth.models import User
+
 from rest_framework.test import APIClient, APITestCase
-from network_node.models import NetworkNode, Address
+
+from network_node.models import Address, NetworkNode
 
 
 class NetworkNodeViewSetTests(APITestCase):
@@ -10,16 +12,10 @@ class NetworkNodeViewSetTests(APITestCase):
         super().setUp()
 
         self.active_user = User.objects.create_user(
-            username="employee",
-            password="pass123",
-            is_active=True,
-            is_staff=True
+            username="employee", password="pass123", is_active=True, is_staff=True
         )
         self.inactive_user = User.objects.create_user(
-            username="inactive",
-            password="pass123",
-            is_active=False,
-            is_staff=True
+            username="inactive", password="pass123", is_active=False, is_staff=True
         )
 
         self.active_client = APIClient()
@@ -29,28 +25,17 @@ class NetworkNodeViewSetTests(APITestCase):
         self.inactive_client.force_authenticate(user=self.inactive_user)
 
         self.factory_address = Address.objects.create(
-            country="Russia",
-            city="Moscow",
-            street="Lenina",
-            house_number="1"
+            country="Russia", city="Moscow", street="Lenina", house_number="1"
         )
         self.retail_address = Address.objects.create(
-            country="Russia",
-            city="SPB",
-            street="Pushkina",
-            house_number="10"
+            country="Russia", city="SPB", street="Pushkina", house_number="10"
         )
         self.retail_with_debt_address = Address.objects.create(
-            country="Germany",
-            city="Berlin",
-            street="B",
-            house_number="2"
+            country="Germany", city="Berlin", street="B", house_number="2"
         )
 
         self.factory = NetworkNode.objects.create(
-            name="Factory",
-            email="factory@test.com",
-            address=self.factory_address
+            name="Factory", email="factory@test.com", address=self.factory_address
         )
 
         self.retail = NetworkNode.objects.create(
@@ -65,7 +50,7 @@ class NetworkNodeViewSetTests(APITestCase):
             email="test@test.com",
             address=self.retail_with_debt_address,
             supplier=self.factory,
-            debt=1000
+            debt=1000,
         )
 
     def test_api_access_only_for_active_user(self):
@@ -80,11 +65,7 @@ class NetworkNodeViewSetTests(APITestCase):
 
     def test_debt_cannot_be_updated(self):
         """Поле debt нельзя изменить через API"""
-        response = self.active_client.patch(
-            f"/api/nodes/{self.retail_with_debt.id}/",
-            {"debt": 9999},
-            format="json"
-        )
+        self.active_client.patch(f"/api/nodes/{self.retail_with_debt.id}/", {"debt": 9999}, format="json")
         self.retail_with_debt.refresh_from_db()
         assert self.retail_with_debt.debt == 1000
 
