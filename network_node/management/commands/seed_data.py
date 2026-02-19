@@ -7,11 +7,12 @@ class Command(BaseCommand):
     help = "seed-команда для создания тестовых данных"
 
     def handle(self, *args, **kwargs):
-        user, _ = User.objects.get_or_create(
-            username="employee1",
-            password="password123",
-            is_active=True
-        )
+        user, created = User.objects.get_or_create(username="employee1")
+        if created:
+            user.set_password("password123")
+            user.is_active = True
+            user.is_staff = True
+            user.save()
         factory_address, _ = Address.objects.get_or_create(
             country="Russia",
             city="Moscow",
