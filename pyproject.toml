@@ -28,6 +28,10 @@ lint = [
     "isort (>=7.0.0,<8.0.0)",
     "flake8 (>=7.3.0,<8.0.0)"
 ]
+dev = [
+    "pytest (>=9.0.2,<10.0.0)",
+    "django-pytest (>=0.2.0,<0.3.0)"
+]
 
 [tool.black]
 line-length = 119
