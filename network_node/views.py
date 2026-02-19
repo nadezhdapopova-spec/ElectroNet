@@ -8,6 +8,7 @@ from network_node.serializers import NetworkNodeSerializer
 
 class NetworkNodeViewSet(viewsets.ModelViewSet):
     """Вьюсет для модели поставщика"""
+
     queryset = NetworkNode.objects.select_related("supplier")
     serializer_class = NetworkNodeSerializer
     permission_classes = [IsActiveEmployee]

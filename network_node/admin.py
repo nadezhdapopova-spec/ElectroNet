@@ -13,6 +13,7 @@ class ProductInline(admin.TabularInline):
 @admin.register(NetworkNode)
 class NetworkNodeAdmin(admin.ModelAdmin):
     """Админ-панель для отображения объектов сети"""
+
     list_display = ("name", "city", "supplier", "debt", "created_at")
     list_filter = ("city", "country")
     readonly_fields = ("supplier_link",)
@@ -38,5 +39,6 @@ class NetworkNodeAdmin(admin.ModelAdmin):
 @admin.register(Product)
 class ProductAdmin(admin.ModelAdmin):
     """Админ-панель для отображения продуктов"""
+
     list_display = ("name", "model", "release_date", "node")
     list_filter = ("release_date",)
