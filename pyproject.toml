@@ -30,9 +30,9 @@ lint = [
 ]
 dev = [
     "pytest (>=9.0.2,<10.0.0)",
-    "django-pytest (>=0.2.0,<0.3.0)",
     "coverage (>=7.13.4,<8.0.0)",
-    "pre-commit (>=4.5.1,<5.0.0)"
+    "pre-commit (>=4.5.1,<5.0.0)",
+    "pytest-django (>=4.12.0,<5.0.0)"
 ]
 
 [tool.black]
