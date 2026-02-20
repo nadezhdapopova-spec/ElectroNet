@@ -197,18 +197,31 @@ POST /api/nodes/
 {
   "name": "Retail Network 1",
   "email": "retail@example.com",
-  "supplier": 1,
-  "address": 2
+  "supplier_id": 1,
+  "address_id": 2
 }
 
 Ответ:
 
 {
-  "id": 5,
-  "name": "Retail Network 1",
-  "level": 1,
+  "id": 3,
+  "name": "Retail Network 3",
+  "email": "retail@example.com",
+  "supplier": {
+     "id": 1,
+     "name": "Factory",
+     "email": "factory@test.com"
+  },
+  "address": {
+     "id": 2,
+     "country": "Russia",
+     "city": "SPB",
+     "street": "Pushkina",
+     "house_number": "10"
+  },
   "debt": "0.00",
-  ...
+  "level": 1,
+  "created_at": "2026-02-20T12:13:24.873842+03:00"
 }
 ```
 

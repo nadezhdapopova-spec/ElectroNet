@@ -22,10 +22,19 @@ class SupplierShortSerializer(serializers.ModelSerializer):
 
 
 class NetworkNodeListSerializer(serializers.ModelSerializer):
-    """Сериализатор модели поставщика: запрещает обновление поля Задолженность перед поставщиком через API"""
+    """
+    Сериализатор модели Поставщик:
+    запрещает обновление поля Задолженность перед поставщиком через API
+    """
 
     supplier = SupplierShortSerializer(read_only=True)
+    supplier_id = serializers.PrimaryKeyRelatedField(
+        queryset=NetworkNode.objects.all(), source="supplier", write_only=True, required=False
+    )
     address = AddressShortSerializer(read_only=True)
+    address_id = serializers.PrimaryKeyRelatedField(
+        queryset=Address.objects.all(), source="address", write_only=True, required=False
+    )
 
     class Meta:
         model = NetworkNode
@@ -34,7 +43,9 @@ class NetworkNodeListSerializer(serializers.ModelSerializer):
             "name",
             "email",
             "supplier",
+            "supplier_id",
             "address",
+            "address_id",
             "debt",
             "level",
             "created_at",
