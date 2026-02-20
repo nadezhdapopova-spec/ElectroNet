@@ -83,7 +83,7 @@ DATABASES = {
     }
 }
 
-if "test" in sys.argv:
+if os.getenv("CI", "False") == "True":
     DATABASES = {
         "default": {
             "ENGINE": "django.db.backends.sqlite3",

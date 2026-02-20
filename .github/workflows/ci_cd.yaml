@@ -29,6 +29,7 @@ jobs:
     env:
       SECRET_KEY: ${{ secrets.SECRET_KEY }}
       ALLOWED_HOSTS: 'localhost,127.0.0.1'
+      CI: True
 
     steps:
     - name: Check out code
