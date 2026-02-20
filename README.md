@@ -1,8 +1,15 @@
+![Python](https://img.shields.io/badge/Python-3.12-blue)
+![Django](https://img.shields.io/badge/Django-5.2.8-green)
+
 ## ElectroNet
 
-REST API и админ-панель для управления иерархической сетью по продаже электроники.
+**REST API и админ-панель для управления иерархической сетью по продаже электроники.**
 
-Тестовое задание реализовано с использованием Django и Django REST Framework.
+Проект реализован в рамках тестового задания и демонстрирует:
+- работу с иерархическими структурами
+- кастомные permission-классы
+- ограничение бизнес-логики на уровне API
+- CI/CD пайплайн
 
 ### Технологический стек
 
@@ -12,42 +19,41 @@ REST API и админ-панель для управления иерархич
 
 - Django REST Framework 3.16.1
 
-- PostgreSQL 10+
+- PostgreSQL
 
-- drf-spectacular (Swagger / Redoc)
+- DRF-spectacular (Swagger / Redoc)
 
-- pytest-django
+- Pytest-django
 
-- coverage
+- Coverage
+
+- Flake8, black, isort
 
 ### Архитектура проекта
 
 Проект построен по стандартной архитектуре Django:
 
-config/                 # Конфигурация проекта
-network_node/           # Основное приложение
-    models.py
-    serializers.py
-    permissions.py
-    views.py
-    urls.py
-    admin.py
-    tests.py
-    management/
-        commands/
-            seed.py
+    config/                 # Конфигурация проекта
+    network_node/           # Основное приложение
+        models.py
+        serializers.py
+        permissions.py
+        views.py
+        urls.py
+        admin.py
+        tests.py
+        management/
+            commands/
+                seed_data.py
 
 
-### Основные сущности
+#### Основные сущности
 
-*NetworkNode* — звено сети
+**_NetworkNode_** — звено сети
 
-*Product* — продукт
+**_Product_** — продукт
 
-*Address* — адрес
-
-
-### Бизнес-логика
+**_Address_** — адрес звена сети
 
 #### Иерархическая структура сети
 
@@ -59,7 +65,7 @@ network_node/           # Основное приложение
 | 1       | Розничная сеть                 |
 | 2       | Индивидуальный предприниматель |
 
-Уровень определяется не названием, а положением в иерархии.
+Уровень определяется не названием, а положением в иерархии:
 
 - Завод не имеет поставщика → уровень 0
 
@@ -69,9 +75,9 @@ network_node/           # Основное приложение
 
 Каждое звено может ссылаться только на одного поставщика.
 
-### Модель данных
+#### Модель данных
 
-*NetworkNode*
+**_NetworkNode_**
 
 name
 
@@ -87,7 +93,7 @@ created_at (auto_now_add)
 
 address (ForeignKey)
 
-*Address*
+**_Address_**
 
 country
 
@@ -97,7 +103,7 @@ street
 
 house_number
 
-*Product*
+**_Product_**
 
 name
 
@@ -107,7 +113,14 @@ release_date
 
 node (ForeignKey на NetworkNode)
 
-### Права доступа
+#### ER-диаграмма
+
+    NetworkNode
+     ├── supplier → NetworkNode (self FK)
+     ├── address → Address
+     └── products → Product
+
+#### Права доступа
 
 Реализован кастомный permission-класс DRF.
 
@@ -119,7 +132,7 @@ node (ForeignKey на NetworkNode)
 
 - сотрудники (is_staff=True)
 
-### API
+#### API
 
 Реализован CRUD для модели NetworkNode.
 
@@ -139,7 +152,7 @@ node (ForeignKey на NetworkNode)
 read_only_fields = ("debt",)
 ```
 
-### Фильтрация
+#### Фильтрация
 
 - Фильтрация по стране (API)
 
@@ -147,7 +160,7 @@ read_only_fields = ("debt",)
 
 - Фильтрация по уровню в иерархической структуре сети
 
-### Админ-панель
+#### Админ-панель
 
 Реализовано:
 
@@ -161,75 +174,43 @@ read_only_fields = ("debt",)
 
 - Просмотр связанных продуктов
 
-### Тестирование
+#### Эндпоинты
 
-Реализовано с помощью pytest-django и coverage
+| Метод  | URL                 | Описание             |
+| ------ | ------------------- | -------------------- |
+| POST   | /api/token/         | Получение JWT        |
+| POST   | /api/token/refresh/ | Обновление JWT       |
+| GET    | /api/nodes/         | Список узлов         |
+| POST   | /api/nodes/         | Создание узла        |
+| GET    | /api/nodes/{id}/    | Детальный просмотр   |
+| PUT    | /api/nodes/{id}/    | Полное обновление    |
+| PATCH  | /api/nodes/{id}/    | Частичное обновление |
+| DELETE | /api/nodes/{id}/    | Удаление             |
+| GET    | /swagger/           | Swagger              |
+| GET    | /redoc/             | ReDoc                |
+| GET    | /admin/             | Админка              |
 
-Запуск тестов
-```bash
-python manage.py test
+**Пример создания объекта сети**
 ```
+POST /api/nodes/
 
-Отчет покрытия
-```bash
-poetry run coverage
+{
+  "name": "Retail Network 1",
+  "email": "retail@example.com",
+  "supplier": 1,
+  "address": 2
+}
+
+Ответ:
+
+{
+  "id": 5,
+  "name": "Retail Network 1",
+  "level": 1,
+  "debt": "0.00",
+  ...
+}
 ```
-### Развёртывание
-
-#### Клонирование репозитория
-```
-git clone <https://github.com/nadezhdapopova-spec/ElectroNet>
-cd electronet
-```
-#### Установка зависимостей
-
-Через Poetry:
-```
-poetry install
-```
-
-Через pip:
-```
-pip install -r requirements.txt
-```
-
-#### Настройка БД
-
-Создать базу PostgreSQL и указать настройки в .env. Пример для сборки .env находится в .env.sample
-
-#### Миграции
-```
-python manage.py migrate
-```
-
-#### Создание суперпользователя
-```
-python manage.py createsuperuser
-```
-
-#### Запуск сервера
-```
-python manage.py runserver
-```
-
-#### Seed-команда
-
-Добавлена команда для генерации тестовых данных:
-```
-python manage.py seed_data
-```
-
-Создаются:
-
-- тестовый пользователь (активный, сотрудник)
-
-- адреса
-
-- завод
-
-- розничная сеть
-
-- продукты
 
 ### Документация API
 
@@ -243,7 +224,180 @@ Redoc UI:
 /redoc/
 ```
 
-### Принятые архитектурные решения
+### Тестирование
+
+Unit тесты реализованы с помощью pytest-django
+
+Запуск тестов
+```bash
+pytest
+```
+
+Отчет покрытия
+``` bash
+poetry run coverage
+```
+
+## Установка и локальный запуск
+
+1. Клонируйте репозиторий
+```
+git clone https://github.com/nadezhdapopova-spec/ElectroNet.git
+cd electronet
+```
+2. Установите зависимости
+
+Через Poetry:
+```
+poetry install
+```
+
+Через pip:
+```
+pip install -r requirements.txt
+```
+
+3. Заполните .env
+````
+env.sample
+
+SECRET_KEY=your_django_secret_key_here
+DEBUG=True
+ALLOWED_HOSTS=localhost,127.0.0.1
+
+DB_NAME=your_database_name_here
+DB_USER=your_database_user_here
+DB_PASSWORD=your_database_password_here
+DB_HOST=localhost
+DB_PORT=5432
+
+DJANGO_LOG_LEVEL=INFO
+````
+4. Создайте базу PostgreSQL
+
+5. Выполните миграции
+```
+python manage.py migrate
+```
+
+6. Создайте суперпользователя
+```
+python manage.py createsuperuser
+```
+
+7. Запустите сервер
+```
+python manage.py runserver
+```
+
+8. Выполните Seed-команду для генерации тестовых данных
+
+Создаются:
+
+- тестовый пользователь (активный, сотрудник)
+
+- адреса
+
+- завод
+
+- розничная сеть
+
+- продукт
+
+```
+python manage.py seed_data
+```
+
+## Запуск проекта на удаленном сервере
+
+Проект развёртывается на удалённом сервере с помощью Docker Compose и GitHub Actions.
+
+**Адрес сервера с развернутым приложением:** https://diploma.creepysnakes.su/
+
+### Архитектура
+
+Client → Nginx → Gunicorn → Django → PostgreSQL
+
+### Настройка удалённого сервера
+
+**На сервере должны быть установлены:**
+````
+sudo apt update
+sudo apt install -y docker.io docker-compose-plugin nginx
+````
+
+**Дополнительно:**
+
+- пользователь добавлен в группу docker
+
+- вход по SSH-ключу
+
+- открыты порты 80, 443, 22
+
+### Переменные окружения
+
+**Файл .env:**
+
+- не коммитится в репозиторий
+
+- используется на сервере и создаётся автоматически в GitHub Actions
+
+Изменения в файле .env:
+````
+DEBUG=False
+DB_HOST=db
+DOCKER_HUB_USERNAME=your_docker_hub_username_here
+DOCKER_HUB_TAG=docker_hub_electronet_image_tag_here
+BASE_SERVER_URL=localhost
+````
+
+### GitHub Secrets
+
+В репозитории → Settings → Secrets and variables → Actions должны быть добавлены:
+
+| Secret                    | Назначение                                |
+|---------------------------|-------------------------------------------|
+| `SECRET_KEY`              | Django SECRET_KEY                         |
+| `DB_PASSWORD`             | Пароль PostgreSQL                         |
+| `BASE_SERVER_URL`         | Домен или IP сервера                      |
+| `DOCKER_HUB_USERNAME`     | Docker Hub username                       |
+| `DOCKER_HUB_ACCESS_TOKEN` | Docker Hub access token                   |
+| `SSH_KEY`                 | Приватный SSH-ключ                        |
+| `SSH_USER`                | Пользователь сервера                      |
+| `SERVER_IP`               | IP сервера                                |
+
+### CI/CD (GitHub Actions)
+
+Workflow расположен в .github/workflows/ci_cd.yaml
+
+**Алгоритм workflow:**
+
+1. Lint
+
+2. Tests
+
+3. Docker build
+
+4. Push to Docker Hub
+
+5. Deploy to server
+
+Pre-commit с линтерами запускается при каждом commit.
+
+Workflow запускается автоматически при каждом push.
+
+### Деплой приложения
+
+Деплой происходит автоматически после успешного прохождения тестов.
+
+Ручной деплой на сервере:
+````
+cd ~/electronet
+docker compose pull
+docker compose up -d
+````
+
+## Принятые архитектурные решения
 
 1. Иерархия реализована через self-relation (ForeignKey("self"))
 
@@ -256,6 +410,7 @@ Redoc UI:
 3. Поле debt сделано read-only в API
 
 Финансовые данные защищены от изменения через публичный интерфейс. 
+
 Управление задолженностью осуществляется через админ-панель или бизнес-логику.
 
 4. Разделены List и Detail сериализаторы
@@ -273,3 +428,13 @@ Redoc UI:
 7. Админ-панель используется для управленческих операций
 
 Фильтрация, ссылка на поставщика и admin action для очистки задолженности реализованы в соответствии с ТЗ.
+
+
+### Автор
+Надежда Попова
+
+Python Developer
+
+📧 nadezhdapopova13@yandex.ru
+
+🔗 GitHub: nadezhdapopova-spec
