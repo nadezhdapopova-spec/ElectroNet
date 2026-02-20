@@ -4,18 +4,24 @@ from network_node.models import Address, NetworkNode, Product
 
 
 class ProductSerializer(serializers.ModelSerializer):
+    """Сериализатор модели Товар: информация о продукте, связанном с конкретным звеном сети"""
+
     class Meta:
         model = Product
         fields = ("id", "name", "model", "release_date")
 
 
 class AddressShortSerializer(serializers.ModelSerializer):
+    """Краткий сериализатор адреса (address): контактная информация звена сети в списке и детальном представлении"""
+
     class Meta:
         model = Address
         fields = ("id", "country", "city", "street", "house_number")
 
 
 class SupplierShortSerializer(serializers.ModelSerializer):
+    """Краткий сериализатор поставщика (supplier): информация о связанномзвене сети (id, name, email)"""
+
     class Meta:
         model = NetworkNode
         fields = ("id", "name", "email")
@@ -23,8 +29,10 @@ class SupplierShortSerializer(serializers.ModelSerializer):
 
 class NetworkNodeListSerializer(serializers.ModelSerializer):
     """
-    Сериализатор модели Поставщик:
-    запрещает обновление поля Задолженность перед поставщиком через API
+    Сериализатор модели Поставщик для list-эндпоинта: информация о звене сети
+    - Поле debt (Задолженность перед поставщиком) запрещено обновлять через API.
+    - Поля supplier и address отображаются в виде вложенных объектов.
+    - Для put/patch-эндпоинтов используются поля supplier_id и address_id
     """
 
     supplier = SupplierShortSerializer(read_only=True)
@@ -54,6 +62,8 @@ class NetworkNodeListSerializer(serializers.ModelSerializer):
 
 
 class NetworkNodeDetailSerializer(NetworkNodeListSerializer):
+    """Сериализатор модели Поставщик для detail-эндпоинта: дополнительно включает список связанных продуктов"""
+
     products = ProductSerializer(many=True, read_only=True)
 
     class Meta(NetworkNodeListSerializer.Meta):

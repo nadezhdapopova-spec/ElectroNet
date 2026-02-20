@@ -4,7 +4,7 @@ from django.db import models
 
 
 class Address(models.Model):
-    """Модель Контакты поставщика"""
+    """Модель Адрес поставщика"""
 
     country = models.CharField(max_length=100, db_index=True)
     city = models.CharField(max_length=100, db_index=True)
@@ -42,7 +42,7 @@ class NetworkNode(models.Model):
 
 
 class Product(models.Model):
-    """Модель Продукт"""
+    """Модель Товар"""
 
     name = models.CharField(max_length=255)
     model = models.CharField(max_length=255)
