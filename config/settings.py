@@ -28,7 +28,6 @@ INSTALLED_APPS = [
     "rest_framework",
     "django_filters",
     "drf_yasg",
-    "corsheaders",
     "rest_framework_simplejwt",
     "network_node",
 ]
@@ -37,7 +36,6 @@ MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
-    "corsheaders.middleware.CorsMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
@@ -74,9 +72,9 @@ DATABASES = {
         "PASSWORD": os.getenv("DB_PASSWORD"),
         "HOST": os.getenv("DB_HOST"),
         "PORT": os.getenv("DB_PORT"),
-        "CONN_MAX_AGE": 0,  # закрываем после КАЖДОГО запроса, каждое соединение свежее
+        "CONN_MAX_AGE": 0,
         "OPTIONS": {
-            "connect_timeout": 5,  # таймаут подключения, Django ждет подключения к PostgreSQL 5 секунд, а не 30
+            "connect_timeout": 5,
             "keepalives": 1,
             "keepalives_idle": 30,
             "keepalives_interval": 5,
@@ -124,7 +122,7 @@ USE_I18N = True
 USE_L10N = True
 USE_TZ = True
 
-# Static files (CSS, JavaScript, Images)
+# Static files
 
 STATIC_URL = "/static/"
 STATICFILES_DIRS = [BASE_DIR / "static"]
@@ -139,17 +137,6 @@ SIMPLE_JWT = {
     "ACCESS_TOKEN_LIFETIME": timedelta(minutes=15),
     "REFRESH_TOKEN_LIFETIME": timedelta(days=1),
 }
-
-# Caches settings
-
-CACHE_ENABLED = True
-if CACHE_ENABLED:
-    CACHES = {
-        "default": {
-            "BACKEND": "django.core.cache.backends.redis.RedisCache",
-            "LOCATION": os.getenv("LOCATION"),
-        }
-    }
 
 # Rest_framework settings
 
@@ -167,16 +154,56 @@ REST_FRAMEWORK = {
     "PAGE_SIZE": 5,
 }
 
-# CORS
+# logging settings
 
-# CORS_ALLOWED_ORIGINS = [
-#     "http://localhost:8000",
-# ]
-#
-# CSRF_TRUSTED_ORIGINS = [
-#     "http://localhost:8000",
-# ]
+BASE_DIR = Path(__file__).resolve().parent.parent
 
-# FRONTEND_URL
+LOG_LEVEL = os.getenv("DJANGO_LOG_LEVEL", "INFO")
+LOG_DIR = BASE_DIR / "logs"
+LOG_DIR.mkdir(parents=True, exist_ok=True)
 
-# FRONTEND_URL = os.getenv("FRONTEND_URL", "http://localhost:8000")
+LOG_HANDLERS = {
+    "console": {
+        "class": "logging.StreamHandler",
+        "formatter": "simple",
+        "level": LOG_LEVEL,
+    },
+    "file_network": {
+        "class": "logging.handlers.RotatingFileHandler",
+        "formatter": "verbose",
+        "level": LOG_LEVEL,
+        "filename": LOG_DIR / "network.log",
+        "maxBytes": 5 * 1024 * 1024,
+        "backupCount": 3,
+        "encoding": "utf-8",
+    },
+}
+
+LOGGING = {
+    "version": 1,
+    "disable_existing_loggers": False,
+    "formatters": {
+        "verbose": {
+            "format": "%(asctime)s | %(levelname)-8s | %(name)s | %(pathname)s:%(lineno)d | %(message)s",
+        },
+        "simple": {
+            "format": "%(levelname)s | %(name)s | %(message)s",
+        },
+    },
+    "handlers": LOG_HANDLERS,
+    "root": {
+        "handlers": ["console", "file_network"],
+        "level": LOG_LEVEL,
+    },
+    "loggers": {
+        "django": {
+            "handlers": ["console"],
+            "level": "WARNING",
+            "propagate": True,
+        },
+        "django.db.backends": {
+            "level": "ERROR",
+        },
+        "network": {"handlers": ["file_network"], "level": LOG_LEVEL, "propagate": False},
+    },
+}
