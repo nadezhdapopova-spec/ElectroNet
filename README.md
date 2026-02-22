@@ -325,7 +325,7 @@ python manage.py seed_data
 
 Проект развёртывается на удалённом сервере с помощью Docker Compose и GitHub Actions.
 
-**Адрес сервера с развернутым приложением:** https://diploma.creepysnakes.su/
+**Адрес сервера с развернутым приложением:** http://...creepysnakes.su/
 
 ### Архитектура
 
