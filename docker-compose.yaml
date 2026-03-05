@@ -1,7 +1,8 @@
 services:
   web:
     container_name: electronet_web
-    image: ${DOCKER_HUB_USERNAME}/electronet:${DOCKER_HUB_TAG}
+#    image: ${DOCKER_HUB_USERNAME}/electronet:${DOCKER_HUB_TAG}
+    build: .
     env_file:
       - .env
     environment:
