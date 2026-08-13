@@ -35,7 +35,7 @@ class NetworkNode(models.Model):
             raise ValidationError("Максимум 3 уровня сети")
 
     def save(self, *args, **kwargs):
-        """Атоматический расчет и сохранение уровня поставщика в сети"""
+        """Автоматический расчет и сохранение уровня поставщика в сети"""
         self.full_clean()
         self.level = self.supplier.level + 1 if self.supplier else 0
         super().save(*args, **kwargs)
