@@ -255,7 +255,7 @@ poetry run coverage
 
 1. Клонируйте репозиторий
 ```
-git clone https://github.com/nadezhdapopova-spec/ElectroNet.git
+git clone https://github.com/simbarilion/ElectroNet.git
 cd electronet
 ```
 2. Установите зависимости
@@ -448,4 +448,4 @@ Python Developer
 
 📧 nadezhdapopova13@yandex.ru
 
-🔗 GitHub: nadezhdapopova-spec
+🔗 GitHub: simbarilion
